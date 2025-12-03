@@ -7,7 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="250">
     <Grid>
-        <Image Margin="10,379,195,10" Source="/IMG_2714.PNG" Stretch="Fill"/>
+        <Image x:Name="STOP" Margin="9,379,195,10" Source="/IMG_2716.PNG" Stretch="Fill" MouseUp="STOP_MouseUp"/>
+        <Image x:Name="REC" Margin="10,379,195,10" Source="/IMG_2714.PNG" Stretch="Fill" MouseUp="REC_MouseUp"/>
+        
 
     </Grid>
 </Window>

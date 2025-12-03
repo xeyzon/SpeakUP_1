@@ -24,5 +24,10 @@ namespace SpeakUP_1
         {
             InitializeComponent();
         }
+        int I = 1;
+        private void REC_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            
+        }
     }
 }
