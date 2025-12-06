@@ -134,5 +134,14 @@
   <ItemGroup>
     <Resource Include="Component 1 %2817%29.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 2 %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 2 %282%29.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -77,7 +77,7 @@ namespace SpeakUP_1
                                 Stretch = Stretch.Fill,
                                 HorizontalAlignment = HorizontalAlignment.Center,
                                 VerticalAlignment = VerticalAlignment.Top,
-                                Margin = new Thickness(0, (otstup * Y) + 10, 0, 0)
+                                Margin = new Thickness(70, (otstup * Y) + 10, 0, 0)
 
                             };
                             W.Children.Add(img);
@@ -95,7 +95,7 @@ namespace SpeakUP_1
                                 Stretch = Stretch.Fill,
                                 HorizontalAlignment = HorizontalAlignment.Center,
                                 VerticalAlignment = VerticalAlignment.Top,
-                                Margin = new Thickness(0, (otstup * Y) + 10, 0, 0)
+                                Margin = new Thickness(70, (otstup * Y) + 10, 0, 0)
 
                             };
                             W.Children.Add(img);
@@ -112,7 +112,7 @@ namespace SpeakUP_1
                                 Stretch = Stretch.Fill,
                                 HorizontalAlignment = HorizontalAlignment.Center,
                                 VerticalAlignment = VerticalAlignment.Top,
-                                Margin = new Thickness(0, (otstup * Y) + 10, 0, 0)
+                                Margin = new Thickness(70, (otstup * Y) + 10, 0, 0)
                             };
                             W.Children.Add(img);
                             Y++;
