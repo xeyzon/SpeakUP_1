@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 
 namespace SpeakUP_1
 {
+
     /// <summary>
     /// Логика взаимодействия для Login.xaml
     /// </summary>

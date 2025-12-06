@@ -22,12 +22,19 @@ namespace SpeakUP_1
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Переменная P - прогресс в словах паразитах
+        // Переменная T - прогресс в темпе речи
+        int P = 1;
+        int T = -1;
+        string imagePath = "\\SpeakUP_1\\SpeakUP_1\\Component 1 (15).png";
         private string _loadedAudio;
         public MainWindow()
         {
             InitializeComponent();
         }
         int I = 1;
+        int Y = 0;
+        int otstup = 115;
         private void LoginB_MouseUp(object sender, MouseButtonEventArgs e)
         {
             Login login = new Login();
@@ -45,7 +52,7 @@ namespace SpeakUP_1
                 MessageBox.Show("Вы не рассказали о себе!");
             }
         }
-
+        
         private void STOP_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (I == 0)
@@ -55,12 +62,73 @@ namespace SpeakUP_1
                 I = 1;
                 REC.IsEnabled = true;
                 REC.Margin = new Thickness(11, 0, 0, 10);
-                for (int i = 0; i < 5; i++)
+                for (int i=0 ; i < 1; i ++)
                 {
+                    if (Y < 4)
+                    {
+                        if ((P > 0) && (T > 0))
+                        {
+                            var bitmap = new BitmapImage(new Uri("pack://application:,,,/Component 1 (15).png", UriKind.Absolute));
+                            var img = new Image
+                            {
+                                Source = bitmap,
+                                Width = 244,
+                                Height = 105,
+                                Stretch = Stretch.Fill,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Top,
+                                Margin = new Thickness(0, (otstup * Y) + 10, 0, 0)
 
+                            };
+                            W.Children.Add(img);
+                            Y++;
+                            P = -1;
+                        }
+                        if ((P < 0) && (T > 0))
+                        {
+                            var bitmap = new BitmapImage(new Uri("pack://application:,,,/Component 1 (16).png", UriKind.Absolute));
+                            var img = new Image
+                            {
+                                Source = bitmap,
+                                Width = 244,
+                                Height = 105,
+                                Stretch = Stretch.Fill,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Top,
+                                Margin = new Thickness(0, (otstup * Y) + 10, 0, 0)
+
+                            };
+                            W.Children.Add(img);
+                            Y++;
+                        }
+                        if ((P > 0) && (T < 0))
+                        {
+                            var bitmap = new BitmapImage(new Uri("pack://application:,,,/Component 1 (17).png", UriKind.Absolute));
+                            var img = new Image
+                            {
+                                Source = bitmap,
+                                Width = 244,
+                                Height = 105,
+                                Stretch = Stretch.Fill,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Top,
+                                Margin = new Thickness(0, (otstup * Y) + 10, 0, 0)
+                            };
+                            W.Children.Add(img);
+                            Y++;
+                        }
+                        if ((P < 0) && (T < 0))
+                        {
+                            MessageBox.Show("Попробуйте заново! Ваши результаты стали хуже");
+
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Попробуйте еще раз!");
+                    }
                 }
-            }
-        }
+            } }
 
         private void REC_MouseUp(object sender, MouseButtonEventArgs e)
         {
