@@ -55,6 +55,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Login.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -62,6 +66,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Login.xaml.cs">
+      <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -102,6 +109,60 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IMG_2716.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %283%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %284%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Rectangle 1 %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %285%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %286%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %287%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %288%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %289%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %2810%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Rectangle 1 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %2812%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %2813%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Component 1 %2814%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="222.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="222 %281%29.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

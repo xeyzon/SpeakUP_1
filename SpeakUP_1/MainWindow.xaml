@@ -5,11 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpeakUP_1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="250">
-    <Grid>
-        <Image x:Name="STOP" Margin="9,379,195,10" Source="/IMG_2716.PNG" Stretch="Fill" MouseUp="STOP_MouseUp"/>
-        <Image x:Name="REC" Margin="10,379,195,10" Source="/IMG_2714.PNG" Stretch="Fill" MouseUp="REC_MouseUp"/>
-        
+        Title="MainWindow" 
+        ResizeMode="NoResize"
+        Height="565" Width="971">
+
+    <Grid x:Name="W" Width="971" >
+
+
+        <Image x:Name="LoginB" Margin="729,10,0,0" Source="/Component 1.png" Stretch="UniformToFill" MouseUp="LoginB_MouseUp" HorizontalAlignment="Left" Width="222" Height="80" VerticalAlignment="Top"/>
+        <Image x:Name="STOP" Margin="11,0,0,10" Source="/Component 1 (6).png" Stretch="Uniform" MouseUp="STOP_MouseUp"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="124" Width="315"/>
+
+
+        <Image x:Name="REC" Margin="10,0,0,10" Source="/Component 1 (5).png" Stretch="UniformToFill" MouseUp="REC_MouseUp" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="124" Width="315" />
+        <Image Margin="8,10,0,226" Source="/Component 1 (9).png" Stretch="Fill" HorizontalAlignment="Left" Width="315" />
+        <Image x:Name="File" Margin="5,0,0,142" Source="/222 (1).png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="80" Width="320" MouseUp="File_MouseUp"/>
+
 
     </Grid>
 </Window>
