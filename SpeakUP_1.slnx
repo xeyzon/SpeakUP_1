@@ -1,3 +1,11 @@
 <Solution>
-  <Project Path="SpeakUP_1/SpeakUP_1.csproj" Id="6c2a8d62-9b56-4604-b870-121ff8a31a4f" />
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="SpeakUP_1/SpeakUP_1.csproj" Id="6c2a8d62-9b56-4604-b870-121ff8a31a4f">
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
 </Solution>

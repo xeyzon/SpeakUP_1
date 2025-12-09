@@ -9,6 +9,7 @@
         ResizeMode="NoResize"
         Height="565" Width="830">
 
+
     <Grid x:Name="W" Width="830" Background="#FFFFD1C4" >
 
 
@@ -22,6 +23,7 @@
         <TextBlock x:Name="T_Stat" HorizontalAlignment="Left" Margin="190,70,0,0" TextWrapping="Wrap" Text="Темп речи" VerticalAlignment="Top" Height="34" Width="117" FontWeight="Bold" FontSize="16" Foreground="White"/>
         <TextBlock x:Name="P_Stat" HorizontalAlignment="Left" Margin="28,70,0,0" TextWrapping="Wrap" Text="Слова-паразиты" VerticalAlignment="Top" Height="34" Width="141" FontWeight="Bold" FontSize="16" Foreground="White"/>
         <Image Margin="583,0,0,0" Source="/Component 2 (2).png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Height="426" Width="229"/>
+        <TextBox x:Name="T1" HorizontalAlignment="Left" Margin="323,123,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="279" Height="179" Background="{x:Null}" BorderBrush="#FFABADB3"/>
 
 
 
