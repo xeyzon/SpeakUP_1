@@ -182,7 +182,7 @@ namespace SpeakUP_1
                 }
             });
         }
-
+        //d
         private void ProcessResult(string json, bool isPartial)
         {
             if (string.IsNullOrEmpty(json)) return;
