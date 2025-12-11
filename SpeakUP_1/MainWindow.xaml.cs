@@ -20,7 +20,13 @@ namespace SpeakUP_1
 
         private string _accumulatedText = "";
 
-        // Переменные логики (как было у вас)
+        // <--- NEW: Переменная для хранения роли пользователя
+        private string _userRole = "Неизвестный спикер";
+
+        // <--- NEW: Экземпляр нашего сервиса GigaChat
+        private GigaChatService _gigaChatService = new GigaChatService();
+
+        // Переменные логики
         int P = 1;
         int T = -1;
         int I = 1;
@@ -31,10 +37,8 @@ namespace SpeakUP_1
         public MainWindow()
         {
             InitializeComponent();
-
-            // Подписываемся на события загрузки и закрытия
             this.Loaded += MainWindow_Loaded;
-            this.Closed += MainWindow_Closed; // <--- ВАЖНО: Убивает процесс при выходе
+            this.Closed += MainWindow_Closed;
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -42,7 +46,6 @@ namespace SpeakUP_1
             await InitializeVoskAsync();
         }
 
-        // Логика правильного закрытия программы
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             try
@@ -55,10 +58,9 @@ namespace SpeakUP_1
                 if (_recognizer != null) _recognizer.Dispose();
                 if (_model != null) _model.Dispose();
             }
-            catch { /* Игнорируем ошибки при выходе */ }
+            catch { }
             finally
             {
-                // ГАРАНТИРОВАННО УБИВАЕМ ПРОЦЕСС
                 Environment.Exit(0);
             }
         }
@@ -69,9 +71,7 @@ namespace SpeakUP_1
             REC.IsEnabled = false;
 
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            // Проверьте, как точно называется папка: ModelVosk или ModelVosk2 ?
-            // Я оставил ModelVosk2, как было в вашем втором методе. Если папка называется ModelVosk, поменяйте тут.
-            string modelPath = System.IO.Path.Combine(baseDir, "ModelVosk");
+            string modelPath = System.IO.Path.Combine(baseDir, "ModelVosk"); // Проверьте имя папки
 
             try
             {
@@ -79,8 +79,7 @@ namespace SpeakUP_1
                 {
                     if (!Directory.Exists(modelPath))
                     {
-                        // Пытаемся найти альтернативное имя, если первой нет
-                        string altPath = System.IO.Path.Combine(baseDir, "ModelVosk");
+                        string altPath = System.IO.Path.Combine(baseDir, "ModelVosk2"); // Проверка альтернативы
                         if (Directory.Exists(altPath)) modelPath = altPath;
                         else throw new DirectoryNotFoundException($"Папка модели не найдена: {modelPath}");
                     }
@@ -95,7 +94,7 @@ namespace SpeakUP_1
             catch (Exception ex)
             {
                 T1.Text = "ОШИБКА ЗАГРУЗКИ";
-                MessageBox.Show($"Ошибка Vosk: {ex.Message}\nПроверьте папку ModelVosk в папке Debug/Release!");
+                MessageBox.Show($"Ошибка Vosk: {ex.Message}");
             }
         }
 
@@ -111,9 +110,8 @@ namespace SpeakUP_1
                     _waveIn.DataAvailable += WaveIn_DataAvailable;
                     _waveIn.StartRecording();
 
-                    // Визуал
                     REC.IsEnabled = false;
-                    REC.Margin = new Thickness(1000, 1000, 0, 0); // Прячем кнопку (ваш стиль)
+                    REC.Margin = new Thickness(1000, 1000, 0, 0);
 
                     STOP.IsEnabled = true;
                     STOP.Margin = new Thickness(11, 0, 0, 10);
@@ -129,8 +127,10 @@ namespace SpeakUP_1
             }
         }
 
-        private void STOP_MouseUp(object sender, MouseButtonEventArgs e)
+        // <--- NEW: Добавили 'async' к сигнатуре метода
+        private async void STOP_MouseUp(object sender, MouseButtonEventArgs e)
         {
+
             if (I == 0)
             {
                 // Останавливаем запись
@@ -146,22 +146,40 @@ namespace SpeakUP_1
                 {
                     var finalJson = _recognizer.Result();
                     ProcessResult(finalJson, isPartial: false);
-                    _recognizer.Dispose(); // Важно освободить
+                    _recognizer.Dispose();
                     _recognizer = null;
                 }
 
-                // Возвращаем интерфейс
-                T1.Text = $"✅ ЗАПИСЬ ЗАВЕРШЕНА. Итог:\n\n{_accumulatedText}";
+                T1.Text = $"✅ ЗАПИСЬ ЗАВЕРШЕНА. Итог:\n{_accumulatedText}";
 
+                // Возвращаем интерфейс
                 STOP.IsEnabled = false;
                 STOP.Margin = new Thickness(1000, 1000, 0, 0);
-
                 REC.IsEnabled = true;
                 REC.Margin = new Thickness(11, 0, 0, 10);
                 I = 1;
 
-                // Ваша логика с картинками
                 AddResultImage();
+
+                // <--- NEW: Вызов GigaChat для анализа
+                // Проверяем, есть ли текст для анализа
+                if (!string.IsNullOrWhiteSpace(_accumulatedText) && _accumulatedText.Length > 10)
+                {
+                    T1.Text += "\n\n GigaChat думает...";
+
+                    // Вызываем сервис
+                    string aiAdvice = await _gigaChatService.SendRequestAsync(_userRole, _accumulatedText);
+
+
+                    // Выводим результат. Лучше сделать отдельный TextBox для советов, 
+                    // но пока добавим к основному тексту
+                    T1.Text += $"\n\n СОВЕТ :\n{aiAdvice}";
+                    T1.ScrollToEnd();
+                }
+                else
+                {
+                    T1.Text += "\n\n(Текст слишком короткий для анализа ИИ)";
+                }
             }
         }
 
@@ -182,7 +200,7 @@ namespace SpeakUP_1
                 }
             });
         }
-        //
+
         private void ProcessResult(string json, bool isPartial)
         {
             if (string.IsNullOrEmpty(json)) return;
@@ -207,25 +225,16 @@ namespace SpeakUP_1
             catch { }
         }
 
-        // Вынес вашу логику картинок в отдельный метод для чистоты
         private void AddResultImage()
         {
-            if (Y >= 4)
-            {
-                MessageBox.Show("Попробуйте еще раз! Места нет.");
-                return;
-            }
+            // Ваш код добавления картинок (без изменений)
+            if (Y >= 4) { MessageBox.Show("Попробуйте еще раз! Места нет."); return; }
 
             string uriSource = "";
-
             if (P > 0 && T > 0) uriSource = "pack://application:,,,/Component 1 (15).png";
             else if (P < 0 && T > 0) uriSource = "pack://application:,,,/Component 1 (16).png";
             else if (P > 0 && T < 0) uriSource = "pack://application:,,,/Component 1 (17).png";
-            else if (P < 0 && T < 0)
-            {
-                MessageBox.Show("Результаты стали хуже. Попробуйте заново!");
-                return;
-            }
+            else if (P < 0 && T < 0) { MessageBox.Show("Результаты хуже. Заново!"); return; }
 
             if (!string.IsNullOrEmpty(uriSource))
             {
@@ -242,30 +251,37 @@ namespace SpeakUP_1
                         VerticalAlignment = VerticalAlignment.Top,
                         Margin = new Thickness(70, (otstup * Y) + 10, 0, 0)
                     };
-                    W.Children.Add(img); // Убедитесь, что Grid/StackPanel называется 'W' в XAML
+                    W.Children.Add(img);
                     Y++;
-
-                    // Сброс логики, как у вас было
                     if (uriSource.Contains("15")) P = -1;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Не удалось загрузить картинку: " + ex.Message);
-                }
+                catch (Exception ex) { MessageBox.Show("Ошибка картинки: " + ex.Message); }
             }
         }
 
+        // Фрагмент из MainWindow.cs
         private void LoginB_MouseUp(object sender, MouseButtonEventArgs e)
         {
             Login login = new Login();
             bool? dialogResult = login.ShowDialog();
+
             if (dialogResult == true)
             {
-                // string TB_Me = login.ResultData; // Логика использования данных
+                // <--- NEW: Сохраняем данные пользователя
+                _userRole = login.ResultData;
+
+                // 🟢 ИСПРАВЛЕНИЕ: Передаем актуальное значение в сервис GigaChat
+                _gigaChatService.UserRole = _userRole;
+
+                MessageBox.Show($"Роль записана: {_userRole}");
             }
             else
             {
-                MessageBox.Show("Вы не рассказали о себе!");
+                MessageBox.Show("Вы не рассказали о себе! Анализ будет общим.");
+                _userRole = "Спикер";
+
+                // 🟢 ИСПРАВЛЕНИЕ: Передаем значение по умолчанию в сервис GigaChat
+                _gigaChatService.UserRole = _userRole;
             }
         }
 
@@ -277,6 +293,8 @@ namespace SpeakUP_1
             {
                 _loadedAudio = openFileDialog.FileName;
                 MessageBox.Show($"Файл: {_loadedAudio}");
+                // Тут пока нет логики распознавания файла, но для нее подход тот же:
+                // Распознали Vosk -> Получили текст -> Вызвали _gigaChatService.SendRequestAsync
             }
         }
     }
