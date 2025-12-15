@@ -9,26 +9,38 @@ using Microsoft.Win32;
 using Vosk;
 using NAudio.Wave;
 using Newtonsoft.Json.Linq;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace SpeakUP_1
 {
-    public partial class MainWindow : Window
+    // 🟢 КЛЮЧ: Добавляем интерфейс INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private Model _model;
         private VoskRecognizer _recognizer;
         private WaveInEvent _waveIn;
 
         private string _accumulatedText = "";
-
-        // <--- NEW: Переменная для хранения роли пользователя
         private string _userRole = "Неизвестный спикер";
+        // Предполагается, что класс GigaChatService существует
+        private GigaChatService _gigaChatService = new GigaChatService();
 
-        // <--- NEW: Экземпляр нашего сервиса GigaChat
-        private GigaChatService _gigaChatService = new GigaChatService();
+        // 🟢 КЛЮЧ: Свойство для управления видимостью полосы загрузки
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(); // Сообщаем XAML, что значение изменилось
+            }
+        }
 
-        // Переменные логики
-        int P = 1;
-        int T = -1;
+        // Переменные логики
+        int P = 1;
+        int T = 1;
         int I = 1;
         int Y = 0;
         int otstup = 115;
@@ -37,8 +49,19 @@ namespace SpeakUP_1
         public MainWindow()
         {
             InitializeComponent();
+
+            // 🟢 КЛЮЧ: Устанавливаем контекст данных, чтобы XAML мог привязаться к IsLoading
+            DataContext = this;
+
             this.Loaded += MainWindow_Loaded;
             this.Closed += MainWindow_Closed;
+        }
+
+        // 🟢 Реализация интерфейса INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -71,7 +94,7 @@ namespace SpeakUP_1
             REC.IsEnabled = false;
 
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string modelPath = System.IO.Path.Combine(baseDir, "ModelVosk"); // Проверьте имя папки
+            string modelPath = System.IO.Path.Combine(baseDir, "ModelVosk");
 
             try
             {
@@ -79,7 +102,7 @@ namespace SpeakUP_1
                 {
                     if (!Directory.Exists(modelPath))
                     {
-                        string altPath = System.IO.Path.Combine(baseDir, "ModelVosk2"); // Проверка альтернативы
+                        string altPath = System.IO.Path.Combine(baseDir, "ModelVosk2");
                         if (Directory.Exists(altPath)) modelPath = altPath;
                         else throw new DirectoryNotFoundException($"Папка модели не найдена: {modelPath}");
                     }
@@ -127,22 +150,21 @@ namespace SpeakUP_1
             }
         }
 
-        // <--- NEW: Добавили 'async' к сигнатуре метода
-        private async void STOP_MouseUp(object sender, MouseButtonEventArgs e)
+        // 🟢 ИСПРАВЛЕННАЯ ЛОГИКА ТУТ
+        private async void STOP_MouseUp(object sender, MouseButtonEventArgs e)
         {
-
             if (I == 0)
             {
-                // Останавливаем запись
-                if (_waveIn != null)
+                // Останавливаем запись
+                if (_waveIn != null)
                 {
                     _waveIn.StopRecording();
                     _waveIn.Dispose();
                     _waveIn = null;
                 }
 
-                // Достаем остатки текста
-                if (_recognizer != null)
+                // Достаем остатки текста
+                if (_recognizer != null)
                 {
                     var finalJson = _recognizer.Result();
                     ProcessResult(finalJson, isPartial: false);
@@ -152,29 +174,45 @@ namespace SpeakUP_1
 
                 T1.Text = $"✅ ЗАПИСЬ ЗАВЕРШЕНА. Итог:\n{_accumulatedText}";
 
-                // Возвращаем интерфейс
-                STOP.IsEnabled = false;
+                // Возвращаем интерфейс
+                STOP.IsEnabled = false;
                 STOP.Margin = new Thickness(1000, 1000, 0, 0);
                 REC.IsEnabled = true;
                 REC.Margin = new Thickness(11, 0, 0, 10);
                 I = 1;
 
-                AddResultImage();
+                // ❌ УДАЛЕН AddResultImage() ОТСЮДА
 
-                // <--- NEW: Вызов GigaChat для анализа
-                // Проверяем, есть ли текст для анализа
-                if (!string.IsNullOrWhiteSpace(_accumulatedText) && _accumulatedText.Length > 10)
+                // Вызов GigaChat для анализа
+                if (!string.IsNullOrWhiteSpace(_accumulatedText) && _accumulatedText.Length > 10)
                 {
                     T1.Text += "\n\n GigaChat думает...";
 
-                    // Вызываем сервис
-                    string aiAdvice = await _gigaChatService.SendRequestAsync(_userRole, _accumulatedText);
+                    // 1. ВКЛЮЧАЕМ АНИМАЦИЮ
+                    IsLoading = true;
 
+                    try
+                    {
+                        // 2. ЖДЕМ АСИНХРОННЫЙ ОТВЕТ
+                        string aiAdvice = await _gigaChatService.SendRequestAsync(_userRole, _accumulatedText);
 
-                    // Выводим результат. Лучше сделать отдельный TextBox для советов, 
-                    // но пока добавим к основному тексту
-                    T1.Text += $"\n\n СОВЕТ :\n{aiAdvice}";
-                    T1.ScrollToEnd();
+                        T1.Text += $"\n\n СОВЕТ :\n{aiAdvice}";
+                        Soviet.Text = $"\n\n \n{aiAdvice}";
+                        T1.ScrollToEnd();
+                        Soviet.ScrollToEnd();
+
+                        // 🟢 3. ВЫЗЫВАЕМ AddResultImage() ТОЛЬКО ПОСЛЕ ПОЛУЧЕНИЯ ОТВЕТА
+                        AddResultImage();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка GigaChat: {ex.Message}");
+                    }
+                    finally
+                    {
+                        // 4. ВЫКЛЮЧАЕМ АНИМАЦИЮ
+                        IsLoading = false;
+                    }
                 }
                 else
                 {
@@ -227,7 +265,6 @@ namespace SpeakUP_1
 
         private void AddResultImage()
         {
-            // Ваш код добавления картинок (без изменений)
             if (Y >= 4) { MessageBox.Show("Попробуйте еще раз! Места нет."); return; }
 
             string uriSource = "";
@@ -251,7 +288,8 @@ namespace SpeakUP_1
                         VerticalAlignment = VerticalAlignment.Top,
                         Margin = new Thickness(70, (otstup * Y) + 10, 0, 0)
                     };
-                    W.Children.Add(img);
+                    // Предполагается, что W - это ваш Grid или StackPanel
+                    W.Children.Add(img);
                     Y++;
                     if (uriSource.Contains("15")) P = -1;
                 }
@@ -259,7 +297,6 @@ namespace SpeakUP_1
             }
         }
 
-        // Фрагмент из MainWindow.cs
         private void LoginB_MouseUp(object sender, MouseButtonEventArgs e)
         {
             Login login = new Login();
@@ -267,20 +304,14 @@ namespace SpeakUP_1
 
             if (dialogResult == true)
             {
-                // <--- NEW: Сохраняем данные пользователя
                 _userRole = login.ResultData;
-
-                // 🟢 ИСПРАВЛЕНИЕ: Передаем актуальное значение в сервис GigaChat
                 _gigaChatService.UserRole = _userRole;
-
                 MessageBox.Show($"Роль записана: {_userRole}");
             }
             else
             {
                 MessageBox.Show("Вы не рассказали о себе! Анализ будет общим.");
                 _userRole = "Спикер";
-
-                // 🟢 ИСПРАВЛЕНИЕ: Передаем значение по умолчанию в сервис GigaChat
                 _gigaChatService.UserRole = _userRole;
             }
         }
@@ -293,8 +324,6 @@ namespace SpeakUP_1
             {
                 _loadedAudio = openFileDialog.FileName;
                 MessageBox.Show($"Файл: {_loadedAudio}");
-                // Тут пока нет логики распознавания файла, но для нее подход тот же:
-                // Распознали Vosk -> Получили текст -> Вызвали _gigaChatService.SendRequestAsync
             }
         }
     }

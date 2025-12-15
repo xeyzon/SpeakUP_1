@@ -8,9 +8,46 @@
         Title="MainWindow" 
         ResizeMode="NoResize"
         Height="565" Width="830">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
 
 
     <Grid x:Name="W" Width="830" Background="#FFFFD1C4" >
+
+        <Border x:Name="GigaChatLoaderBorder"
+        Width="224"
+        HorizontalAlignment="Left"
+        Margin="338,0,0,14"  
+        BorderBrush="#cf7f54"  
+        BorderThickness="8"
+        
+        CornerRadius="4"
+        
+       
+        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}" RenderTransformOrigin="0.5,0.5" Height="40" VerticalAlignment="Bottom">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="0.007"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+
+            <ProgressBar x:Name="GigaChatLoader"
+                 IsIndeterminate="True"
+                Background="#ffa879">
+                <ProgressBar.Foreground>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#a3d6e8" Offset="0.0"/>
+                        <GradientStop Color="#53b8dc" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </ProgressBar.Foreground>
+
+            </ProgressBar>
+        </Border>
+
 
 
         <Image x:Name="LoginB" Margin="584,10,0,0" Source="/Component 1.png" Stretch="UniformToFill" MouseUp="LoginB_MouseUp" HorizontalAlignment="Left" Width="222" Height="80" VerticalAlignment="Top"/>
@@ -23,7 +60,8 @@
         <TextBlock x:Name="T_Stat" HorizontalAlignment="Left" Margin="190,70,0,0" TextWrapping="Wrap" Text="Темп речи" VerticalAlignment="Top" Height="34" Width="117" FontWeight="Bold" FontSize="16" Foreground="White"/>
         <TextBlock x:Name="P_Stat" HorizontalAlignment="Left" Margin="28,70,0,0" TextWrapping="Wrap" Text="Слова-паразиты" VerticalAlignment="Top" Height="34" Width="141" FontWeight="Bold" FontSize="16" Foreground="White"/>
         <Image Margin="583,0,0,0" Source="/Component 2 (2).png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Height="426" Width="229"/>
-        <TextBox x:Name="T1" HorizontalAlignment="Left" Margin="541,278,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="279" Height="179" Background="{x:Null}" BorderBrush="#FFABADB3"/>
+        <TextBox x:Name="T1" HorizontalAlignment="Left" Margin="347,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="188" Height="110" Background="{x:Null}" BorderBrush="#FFABADB3" Foreground="White" FontWeight="Bold"/>
+        <TextBox x:Name="Soviet" HorizontalAlignment="Left" Margin="605,142,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="182" Height="336" Background="{x:Null}" Foreground="White" SelectionBrush="{x:Null}" BorderBrush="{x:Null}" FontWeight="Bold"/>
 
 
 
